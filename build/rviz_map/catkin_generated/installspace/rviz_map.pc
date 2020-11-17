@@ -1,0 +1,8 @@
+prefix=/home/caipirultron/RL_simulation/install
+
+Name: rviz_map
+Description: Description of rviz_map
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
