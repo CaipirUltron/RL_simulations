@@ -1,0 +1,12 @@
+Run:
+
+1) roscore
+
+2) rosrun rviz rviz -d <teu path>/RL_simulation/src/rviz_map/gridMap.rviz 
+
+3) rosrun rviz_map <teu path>/RL_simulation/src/rviz_map/src/graphics_broadcaster.py 
+
+
+
+
+
