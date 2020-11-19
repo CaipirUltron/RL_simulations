@@ -44,12 +44,12 @@ if __name__ == '__main__':
             
             cells_publisher.publish(gridMap)
 
-            random_x = np.random.randint(-5, high=5) + 0.5
-            random_y = np.random.randint(-5, high=5) + 0.5
+            random_x = np.random.randint(0, high=5) + 0.5
+            random_y = np.random.randint(0, high=5) + 0.5
             point = Point(random_x, random_y, 0)
             gridMap.cells.append(point)
             
-            world_tf.sendTransform((0,0,0),(0,0,0,1),rospy.Time.now(),"grid_frame", "world")
+            world_tf.sendTransform((5,5,0),(0,0,0,1),rospy.Time.now(),"grid_frame", "world")
             
             rate.sleep()
 
