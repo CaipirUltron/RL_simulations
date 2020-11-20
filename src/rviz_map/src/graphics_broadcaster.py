@@ -142,9 +142,12 @@ if __name__ == '__main__':
         
         # Define world map and robot
         map_size = 10
-        world = Map(map_size)
+        # map = np.random.randint(0, 2, size=(map_size,map_size), dtype = np.int8)
+        map = np.zeros((map_size,map_size), dtype = np.int8)
 
-        init_pos = np.array([0, 0])
+        world = Map(map_size, map)
+
+        init_pos = np.array([4, 4])
         init_angle = 0
         turtle = Robot(world, init_pos, init_angle)
 
@@ -156,16 +159,24 @@ if __name__ == '__main__':
         turtleSimulation = GridWorldSimulation(turtle)
 
         # Main ROS loop
-        rate = rospy.Rate(2)  # 10hz
+        rate = rospy.Rate(1)  # 10hz
         while not rospy.is_shutdown():
             
             action = np.random.randint(-1, 2)
+            rospy.loginfo("Sending command: %s", action)
+
             turtleSimulation.robot.sim_dynamics(action)
             turtleSimulation.update_robot()
             turtleSimulation.update_map()
 
-            rospy.loginfo("Sending command: %s", action)
-            rospy.loginfo("Turtle state: (%s, %s, %s)", turtleSimulation.robot.position[0], turtleSimulation.robot.position[1], turtleSimulation.robot.angle)
+            # if (turtleSimulation.robot.world.map[turtleSimulation.robot.position[1]][turtleSimulation.robot.position[0]] == 1):
+            #     rospy.loginfo("Occupied cell.")
+            # else:
+            #     rospy.loginfo("Free cell.")
+
+            # rospy.loginfo("Next state: (%s, %s, %s)", turtleSimulation.robot.next_position[0], turtleSimulation.robot.next_position[1], turtleSimulation.robot.angle)
+
+            # rospy.loginfo("Turtle state: (%s, %s, %s)", turtleSimulation.robot.position[0], turtleSimulation.robot.position[1], turtleSimulation.robot.angle)
 
             rate.sleep()
 
