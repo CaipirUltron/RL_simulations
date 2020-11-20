@@ -1,10 +1,23 @@
-Run:
+Right after cloning the repository, open a new terminal and perform the following steps:
+
+1) cd <your path>/RL_simulations
+2) catkin_make
+3) echo 'source <your path>/RL_simulation/devel/setup.bash' >> ~/.bashrc
+4) source ~/.bashrc
+
+Ok! Now run:
 
 1) roscore
+2) rosrun rviz rviz -d <your path>/RL_simulation/src/rviz_map/gridMap.rviz
+3) rosrun rviz_map graphics_broadcaster.py
 
-2) rosrun rviz rviz -d <teu path>/RL_simulation/src/rviz_map/gridMap.rviz 
+Your should see the robot performing random movements on the grid!
+Everything can be edited from the main loop inside graphics_broadcaster.py:
+i) map grid size
+ii) robot initial position
+iii) robot initial angle
 
-3) rosrun rviz_map <teu path>/RL_simulation/src/rviz_map/src/graphics_broadcaster.py 
+Enjoy
 
 
 

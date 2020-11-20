@@ -1,13 +1,15 @@
+
+#!/usr/bin/env python3
+
 import numpy as np
 import math
-
 
 class Map:
 
 	def __init__(self, size = 5):
-		self._size = size
-		self._map = np.zeros((self._size, self._size), dtype = np.int8)
-		self._goal_position = np.zeros(2)
+		self.size = size
+		self.map = np.zeros((self.size, self.size), dtype = np.int8)
+		self.goal_position = np.zeros(2)
 
 		# Randomize
 		# self.generate_obstacles()
@@ -15,8 +17,5 @@ class Map:
 
 	# def generate_obstacles(self):
 
-	def get_size(self):
-		return self._size
-
 	def generate_goal(self):
-		self._goal_position = np.array([ np.random.randint(1, high=self._size), np.random.randint(0, high=self._size) ])
+		self.goal_position = np.array([ np.random.randint(1, high=self.size), np.random.randint(0, high=self.size) ])
