@@ -10,12 +10,10 @@ class Map:
 		self._goal_position = np.zeros(2)
 
 		# Randomize
-		self.generate_obstacles()
+		# self.generate_obstacles()
 		self.generate_goal()
 
-	def generate_obstacles(self):
-
-		for
+	# def generate_obstacles(self):
 
 	def get_size(self):
 		return self._size
