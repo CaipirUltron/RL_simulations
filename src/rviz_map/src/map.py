@@ -8,7 +8,8 @@ class Map:
 
 	def __init__(self, size = 5):
 		self.size = size
-		self.map = np.zeros((self.size, self.size), dtype = np.int8)
+		self.map = np.random.randint(0, 2, size=(self.size,self.size))
+		# self.map = np.zeros((self.size, self.size), dtype = np.int8)
 		self.goal_position = np.zeros(2)
 
 		# Randomize

@@ -38,9 +38,6 @@ class GridWorldSimulation():
         self.robot_angle_marker = PoseStamped()
         self.goal_marker = Marker()
 
-        # Send map transformation
-        self.world_tf.sendTransform((0,0,0),(0,0,0,1),rospy.Time.now(),"map_frame", "world")
-
         # Initialize rviz map
         self.rviz_map.header.frame_id = "map_frame"
         self.rviz_map.header.seq = self.rviz_map.header.seq + 1
@@ -101,16 +98,19 @@ class GridWorldSimulation():
         self.goal_marker.pose.orientation.w = 1.0
 
         # Initial map update
-        self.update_map(self.robot.world.map)
+        self.update_map()
 
     # This function receives an numpy occupancy map and publishes it in rviz_map
-    def update_map(self, map_array):
+    def update_map(self):
 
         self.rviz_map.header.seq = self.rviz_map.header.seq + 1
         self.rviz_map.header.stamp = rospy.Time.now()
         self.rviz_map.info.map_load_time = rospy.Time.now()
+        self.rviz_map.data = 100 * self.robot.world.map.flatten()
 
-        self.rviz_map.data = 100 * map_array.flatten()
+        # Send map transformation
+        self.world_tf.sendTransform((0,0,0),(0,0,0,1),rospy.Time.now(),"map_frame", "world")
+
         self.map_publisher.publish(self.rviz_map)
         self.goal_marker_publisher.publish(self.goal_marker)
 
@@ -162,6 +162,7 @@ if __name__ == '__main__':
             action = np.random.randint(-1, 2)
             turtleSimulation.robot.sim_dynamics(action)
             turtleSimulation.update_robot()
+            turtleSimulation.update_map()
 
             rospy.loginfo("Sending command: %s", action)
             rospy.loginfo("Turtle state: (%s, %s, %s)", turtleSimulation.robot.position[0], turtleSimulation.robot.position[1], turtleSimulation.robot.angle)
