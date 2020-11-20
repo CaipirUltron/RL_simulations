@@ -34,48 +34,59 @@ class Robot:
         if action == 0:
 
             if self.angle == 0:
-                self.next_position = np.array([ np.minimum(self.next_position[0] + 1,self.world.size-1), self.next_position[1] ])
+                direction = np.array([1,0])
             elif self.angle == 45:
-                self.next_position = np.array([ np.minimum(self.next_position[0] + 1,self.world.size-1), np.maximum(self.next_position[1] - 1,0) ])
+                direction = np.array([1,-1])
             elif self.angle == 90:
-                self.next_position = np.array([ self.next_position[0], np.maximum(self.next_position[1] - 1,0) ])
+                direction = np.array([0,-1])
             elif self.angle == 135:
-                self.next_position = np.array([ np.maximum(self.next_position[0] - 1,0), np.maximum(self.next_position[1] - 1,0) ])
+                direction = np.array([-1,-1])
             elif self.angle == 180:
-                self.next_position = np.array([ np.maximum(self.next_position[0] - 1,0), self.next_position[1] ])
+                direction = np.array([-1,0])
             elif self.angle == 225:
-                self.next_position = np.array([ np.maximum(self.next_position[0] - 1,0), np.minimum(self.next_position[1] + 1,self.world.size-1) ])
+                direction = np.array([-1,1])
             elif self.angle == 270:
-                self.next_position = np.array([ self.next_position[0], np.minimum(self.next_position[1] + 1,self.world.size-1) ])
+                direction = np.array([0,1])
             elif self.angle == 315:
-                self.next_position = np.array([ np.minimum(self.next_position[0] + 1,self.world.size-1), np.minimum(self.next_position[1] + 1,self.world.size-1) ])
+                direction = np.array([1,1])
+
+            self.next_position = self.position + direction
 
             # Collision check: if robot has collided, then the position is not updated.
             if not self.check_collision():
                 self.position = self.next_position
             else:
-                self.next_position = self.position
-                print("Collision!")
+                print("Collision")
 
-        # print("Actual Pos = ", self.position)
-        # print("Next Pos = ", self.next_position)
+            # If the robot reached the goal position, then generate a new one
+            if self.check_goal_reached():
+                self.world.generate_random_goal()
 
+        # GO LEFT action
         if action == 1:
             if self.angle != 315:
                 self.angle += 45
             else:
                 self.angle = 0
 
+        # GO RIGHT action
         if action == -1:
             if self.angle != 0:
                 self.angle -= 45
             else:
                 self.angle = 315
 
+    # Check general collisions
     def check_collision(self):
 
-        return self.check_wall_collision() or self.check_obstacle_collision()
+        if self.check_wall_collision():
+            return True
+        elif self.check_obstacle_collision():
+            return True
+        else:
+            return False
 
+    # Check collisions against a wall
     def check_wall_collision(self):
 
         if (self.next_position[0] >= self.world.size) or (self.next_position[0] < 0) or (self.next_position[1] >= self.world.size) or (self.next_position[1] < 0): # reached a wall
@@ -83,11 +94,24 @@ class Robot:
         else:
             return False
 
+    # Check collisions against an obstacle on the map
     def check_obstacle_collision(self):
 
         if (self.world.map[self.next_position[1]][self.next_position[0]] == 1):
             return True
         else:
             return False
+
+    def check_goal_reached(self):
+
+        if self.position[0] == self.world.goal_position[0] and self.position[1] == self.world.goal_position[1]:
+            return True
+        else:
+            return False
+
+    # Returns random action
+    @staticmethod
+    def random_action():
+        return np.random.randint(-1, 2)
 
     # def line_of_sight(self):  

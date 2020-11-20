@@ -6,17 +6,33 @@ import math
 
 class Map:
 
-	def __init__(self, size = 5, map = np.zeros((5,5),dtype = np.int8)):
-		
+	def __init__(self, size = 5, map = None, goal = np.zeros(2)):
+
 		self.size = size
-		self.map = map
-		self.goal_position = np.zeros(2)
+		if map:
+			self.map = map
+		else:
+			self.map = np.zeros((self.size,self.size),dtype = np.int8)
+		self.goal_position = goal
 
-		# Randomize
-		# self.generate_obstacles()
-		self.generate_goal()
+	# Generate goal position
+	def generate_random_goal(self):
+		self.goal_position = np.random.randint(0, self.size-1, size=2)
+		if self.check_goal_collision():
+			print("Goal is colliding with obstacle.")
 
-	# def generate_obstacles(self):
+	# Generate random map with occupancy probability in the interval [0.0,1.0]
+	def generate_random_map(self, occupancy_probability = 0.5):
 
-	def generate_goal(self):
-		self.goal_position = np.array([ np.random.randint(1, high=self.size), np.random.randint(0, high=self.size) ])
+		for i in range(0,self.size):
+			for j in range(0,self.size):
+				self.map[i][j] = np.random.choice(np.arange(0,2), p = [1-occupancy_probability, occupancy_probability])
+
+		# self.map = np.random.randint(0, 2, size=(self.size,self.size), dtype = np.int8)
+
+	# Checks if goal is inside an obstacle
+	def check_goal_collision(self):
+		if self.map[self.goal_position[1]][self.goal_position[0]] == 1:
+			return True
+		else:
+			return False
