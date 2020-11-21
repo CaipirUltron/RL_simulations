@@ -16,14 +16,22 @@ class Robot:
         self.next_position = initial_pos
         self.position = initial_pos
 
+        # Check if robot is initially inside the map 
         if self.check_wall_collision():
             print("Initial position outside of map bounds!")
-            new_pos = np.random.randint(0, 10, size=2)
-            self.next_position = new_pos
-            self.position = new_pos
+            self.next_position = np.random.randint(0, 10, size=2)
 
-        if self.check_obstacle_collision():
-            print("Initial position is not a free space.")
+        # Check if robot is initially overlapping with some obstacle
+        if (self.world.occupancy_p == 1.0):
+            self.next_position = np.array([0, self.world.size*self.world.size])
+            print("No free spaces available in map.")
+        else:
+            while self.check_obstacle_collision():
+                self.next_position = np.random.randint(0, 10, size=2)
+                print("Initial position is not a free space!")
+
+        # Update robot initial position
+        self.position = self.next_position
 
         # Possible actions: 1 => go_left, 0 => go_ahead, -1 => go_right
         self.obs_array = np.zeros(3)

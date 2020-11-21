@@ -144,7 +144,7 @@ if __name__ == '__main__':
         
         # Define map and goal position
         map_size = 10
-        occupancy_probability = 0.3
+        occupancy_probability = 0.4
         world = Map(map_size)
         world.generate_random_map(occupancy_probability)
         world.generate_random_goal()

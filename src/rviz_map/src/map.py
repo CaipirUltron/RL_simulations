@@ -21,12 +21,12 @@ class Map:
 
 		if (self.occupancy_p == 1.0):
 			self.goal_position = np.array([0, self.size*self.size])
-			print("No free spaces available.")
+			print("No free spaces available in the map.")
 		else:
 			self.goal_position = np.random.randint(0, self.size-1, size=2)
 			while self.check_goal_collision():
 				self.goal_position = np.random.randint(0, self.size-1, size=2)
-				print("Goal is colliding with obstacle. Resetting goal position...")
+				# print("Goal is colliding with obstacle. Resetting goal position...")
 
 	# Generate random map with occupancy probability in the interval [0.0,1.0]
 	def generate_random_map(self, p = 0.5):
