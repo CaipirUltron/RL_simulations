@@ -23,7 +23,7 @@ class Robot:
             self.position = new_pos
 
         if self.check_obstacle_collision():
-            print("Initial position is not a free space!")
+            print("Initial position is not a free space.")
 
         # Possible actions: 1 => go_left, 0 => go_ahead, -1 => go_right
         self.obs_array = np.zeros(3)
@@ -61,7 +61,8 @@ class Robot:
             else:
                 self.angle = 315
 
-    # def look_ahead(self):
+    # def get_neighbors(self):
+        
 
     def get_observation(self):
 
@@ -89,7 +90,7 @@ class Robot:
     # Check collisions against an obstacle on the map
     def check_obstacle_collision(self):
 
-        if (self.world.map[self.next_position[1]][self.next_position[0]] == 1):
+        if (self.world.map[self.next_position[1],self.next_position[0]] == 1):
             return True
         else:
             return False
