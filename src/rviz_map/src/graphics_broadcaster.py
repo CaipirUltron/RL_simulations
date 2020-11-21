@@ -13,6 +13,7 @@ from tf.transformations import quaternion_from_euler
 from map import Map
 from robot import Robot
 
+
 class GridWorldSimulation():
 
     def __init__(self, robot):
@@ -100,7 +101,6 @@ class GridWorldSimulation():
         # Initial map update
         self.update_map()
 
-
     # This function receives an numpy occupancy map and publishes it in rviz_map
     def update_map(self):
 
@@ -114,7 +114,6 @@ class GridWorldSimulation():
         self.world_tf.sendTransform((0,0,0),quat_map,rospy.Time.now(),"map_frame", "world")
         self.map_publisher.publish(self.rviz_map)
 
-
     # This function receives a Pose ROS msg and updates the corresponding transformation
     def update_robot(self):
 
@@ -126,7 +125,6 @@ class GridWorldSimulation():
         self.world_tf.sendTransform((robot_marker_position_x,robot_marker_position_y,0),robot_quat,rospy.Time.now(),"robot_frame", "world")
         self.robot_marker_publisher.publish(self.robot_position_marker)
         self.angle_marker_publisher.publish(self.robot_angle_marker)
-
 
     # This function receives a Point ROS msg and updates the corresponding transformation
     def update_goal(self):
@@ -143,7 +141,7 @@ if __name__ == '__main__':
     try:
         
         # Define map and goal position
-        map_size = 10
+        map_size = 6
         occupancy_probability = 0.4
         world = Map(map_size)
         world.generate_random_map(occupancy_probability)
@@ -162,18 +160,20 @@ if __name__ == '__main__':
         turtleSimulation = GridWorldSimulation(turtle)
 
         # Main ROS loop
-        rate = rospy.Rate(10)  # 10hz
+        rate = rospy.Rate(1)  # 10hz
         while not rospy.is_shutdown():
             
             # Updates map graphics
             turtleSimulation.update_map()
 
             # Randomly moves the turtle
-            action = turtleSimulation.robot.go_random()
+            turtleSimulation.robot.go_random()
 
             # Updates robot and goal graphics
             turtleSimulation.update_robot()
             turtleSimulation.update_goal()
+
+            rospy.loginfo("Line of sight: (%s,%s,%s)", turtleSimulation.robot.observation[0], turtleSimulation.robot.observation[1], turtleSimulation.robot.observation[2])
 
             rate.sleep()
 

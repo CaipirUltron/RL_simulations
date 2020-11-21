@@ -2,33 +2,43 @@
 #!/usr/bin/env python3
 
 import numpy as np
-import math
+
 
 class Map:
 
-	def __init__(self, size = 5, map = None, goal = np.zeros(2)):
+	def __init__(self, size = 5, map = None, goal = np.zeros(2,dtype=np.int8)):
 
-		self.size = size
+		# Always creates maps with an even size number
+		if (size % 2 == 0):
+			self.size = size
+		else:
+			self.size = size + 1
+
+		# Initializes map
 		if map:
 			self.map = map
 		else:
 			self.map = np.zeros((self.size,self.size),dtype = np.int8)
-		self.goal_position = goal
 		self.occupancy_p = 0.0
 
-	# Generate random goal position
+		# Sets goal position and verifies if it collides with some obstacle.
+		# If it does, then restart it with random position.
+		self.goal_position = goal
+		if self.check_goal_collision():
+			print("Goal is colliding with obstacle. Resetting initial goal position...")
+			self.generate_random_goal()
+
+	# Generates random goal position
 	def generate_random_goal(self):
 
 		if (self.occupancy_p == 1.0):
-			self.goal_position = np.array([0, self.size*self.size])
-			print("No free spaces available in the map.")
+			raise Exception("No free spaces available on the map.")
 		else:
-			self.goal_position = np.random.randint(0, self.size-1, size=2)
+			self.goal_position = np.random.randint(0, self.size, size=2)
 			while self.check_goal_collision():
-				self.goal_position = np.random.randint(0, self.size-1, size=2)
-				# print("Goal is colliding with obstacle. Resetting goal position...")
+				self.goal_position = np.random.randint(0, self.size, size=2)
 
-	# Generate random map with occupancy probability in the interval [0.0,1.0]
+	# Generates random map with occupancy probability in the interval [0.0,1.0]
 	def generate_random_map(self, p = 0.5):
 
 		self.occupancy_p = p
