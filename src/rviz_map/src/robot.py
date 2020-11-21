@@ -5,10 +5,11 @@ import math
 
 # from map import Map
 
+
 class Robot:
 
-    def __init__(self, world, initial_pos=np.zeros(2,dtype=np.int8), initial_angle=0):
-        
+    def __init__(self, world, initial_pos=np.zeros(2, dtype=np.int8), initial_angle=0):
+
         self.world = world
         self.angle = initial_angle
 
@@ -25,36 +26,20 @@ class Robot:
             print("Initial position is not a free space!")
 
         # Possible actions: 1 => go_left, 0 => go_ahead, -1 => go_right
-        self.last_action = 0
-        self.obs_state = 0
+        self.obs_array = np.zeros(3)
 
     def sim_dynamics(self, action):
 
         # GO AHEAD action
         if action == 0:
 
-            if self.angle == 0:
-                direction = np.array([1,0])
-            elif self.angle == 45:
-                direction = np.array([1,-1])
-            elif self.angle == 90:
-                direction = np.array([0,-1])
-            elif self.angle == 135:
-                direction = np.array([-1,-1])
-            elif self.angle == 180:
-                direction = np.array([-1,0])
-            elif self.angle == 225:
-                direction = np.array([-1,1])
-            elif self.angle == 270:
-                direction = np.array([0,1])
-            elif self.angle == 315:
-                direction = np.array([1,1])
-
+            direction = self.get_forward()
             self.next_position = self.position + direction
 
             # Collision check: if robot has collided, then the position is not updated.
             if not self.check_collision():
                 self.position = self.next_position
+                print("Free move")
             else:
                 print("Collision")
 
@@ -75,6 +60,13 @@ class Robot:
                 self.angle -= 45
             else:
                 self.angle = 315
+
+    # def look_ahead(self):
+
+    def get_observation(self):
+
+        if self.angle == 0:
+            self.obs_array[1] = self.world.map[self.position[1]][self.position[0]]
 
     # Check general collisions
     def check_collision(self):
@@ -102,6 +94,7 @@ class Robot:
         else:
             return False
 
+    # Check if the goal was reached
     def check_goal_reached(self):
 
         if self.position[0] == self.world.goal_position[0] and self.position[1] == self.world.goal_position[1]:
@@ -109,9 +102,47 @@ class Robot:
         else:
             return False
 
+    # Returns the forward direction vector, depending on orientation
+    def get_forward(self):
+        
+        if self.angle == 0:
+            direction = np.array([1,0])
+        elif self.angle == 45:
+            direction = np.array([1,-1])
+        elif self.angle == 90:
+            direction = np.array([0,-1])
+        elif self.angle == 135:
+                direction = np.array([-1,-1])
+        elif self.angle == 180:
+            direction = np.array([-1,0])
+        elif self.angle == 225:
+            direction = np.array([-1,1])
+        elif self.angle == 270:
+            direction = np.array([0,1])
+        elif self.angle == 315:
+            direction = np.array([1,1])
+
+        return direction
+
+    # Go forward
+    def go_forward(self):
+        self.sim_dynamics(0)
+
+    # Go left
+    def go_left(self):
+        self.sim_dynamics(1)
+
+    # Go right
+    def go_right(self):
+        self.sim_dynamics(-1)
+
+    # Perform random movement
+    def go_random(self):
+        self.sim_dynamics(self.random_action())
+
     # Returns random action
     @staticmethod
     def random_action():
         return np.random.randint(-1, 2)
 
-    # def line_of_sight(self):  
+    # def line_of_sight(self):

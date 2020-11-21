@@ -144,7 +144,7 @@ if __name__ == '__main__':
         
         # Define map and goal position
         map_size = 10
-        occupancy_probability = 0.2
+        occupancy_probability = 0.3
         world = Map(map_size)
         world.generate_random_map(occupancy_probability)
         world.generate_random_goal()
@@ -165,16 +165,15 @@ if __name__ == '__main__':
         rate = rospy.Rate(10)  # 10hz
         while not rospy.is_shutdown():
             
+            # Updates map graphics
             turtleSimulation.update_map()
 
-            action = turtleSimulation.robot.random_action()
-            rospy.loginfo("Sending command: %s", action)
+            # Randomly moves the turtle
+            action = turtleSimulation.robot.go_random()
 
-            turtleSimulation.robot.sim_dynamics(action)
+            # Updates robot and goal graphics
             turtleSimulation.update_robot()
             turtleSimulation.update_goal()
-
-            rospy.loginfo("Turtle state: (%s, %s, %s)", turtleSimulation.robot.position[0], turtleSimulation.robot.position[1], turtleSimulation.robot.angle)
 
             rate.sleep()
 
