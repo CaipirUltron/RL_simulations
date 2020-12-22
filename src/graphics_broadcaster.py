@@ -143,12 +143,13 @@ if __name__ == '__main__':
     try:
         
         # Define map and goal position
-        map_size = 10
-        occupancy_probability = 0         #controls probability of obstacles
-        goal_position = np.array([2 , 2])
-        world = Map(map_size, goal_position)
+        map_size = 6
+        occupancy_probability = 0.4        #controls probability of obstacles
+        goal_position = np.array([2 , 2])   #TEST CONDITION
+        world = Map(map_size, goal_position)   #TEST CONDITION
+        #world = Map(map_size)          #REPOR APOS TESTE
         world.generate_random_map(occupancy_probability)
-        #world.generate_random_goal()
+        world.generate_random_goal()
 
         # Define robot
         init_pos = np.array([2, 0])
@@ -165,7 +166,7 @@ if __name__ == '__main__':
         turtleSimulation = GridWorldSimulation(turtle)
 
         # Main ROS loop
-        rate = rospy.Rate(0.5)  # 10hz
+        rate = rospy.Rate(10000)  # 1000hz
 
 
 
@@ -177,6 +178,9 @@ if __name__ == '__main__':
         Q_var = QLearning(turtle)
         epsilon = 0.5               #determina exploration ou exploitation
         Q_var.current_state()
+
+        moves=0
+        episode = 1
 
         while not rospy.is_shutdown():
             
@@ -190,23 +194,22 @@ if __name__ == '__main__':
 
 
 
-            #if np.random.uniform(0, 1) < epsilon:
-            #    action = turtleSimulation.robot.go_random()                      # Explore action space
-            #    Q_var.action_taken = action             #para saber qual action tomou
-            #else:
-            #    Q_var.choose_action()                                                # Exploit learned values
+            if np.random.uniform(0, 1) < epsilon:
+                action = turtleSimulation.robot.go_random()                          # Explore action space
+                Q_var.action_taken = action             #para saber qual action tomou
+            else:
+                Q_var.choose_action()                                                # Exploit learned values
 
-            turtle.go_left()
 
             Q_var.next_state()
 
            
 
-            #Q_var.update_Qvalue()
+            Q_var.update_Qvalue()
 
 
 
-            Q_var.current_state()                   #atualiza estado
+            Q_var.current_state()                               #atualiza estado
 
 
             # Updates robot and goal graphics
@@ -217,5 +220,27 @@ if __name__ == '__main__':
 
             rate.sleep()
 
+            moves += 1
+
+            
+
+            if(moves == 1000):                  #se estiver stuck no episodio faz reset
+                world.generate_random_map(occupancy_probability)
+                world.generate_random_goal()
+                turtle = Robot(world, init_pos, init_angle)   
+                moves=1
+                episode+=1
+                Q_var.current_state() 
+
+            if(episode==50):                  #visualizar resultado do qlearning
+                epsilon = 0
+                rate = rospy.Rate(1)  # 1hz
+
+            if(episode==100):                  #quando acabar episodios
+                break
+            
+            print("episode: ", episode)
+
+        print(Q_var.Q_table)                    #imprime tabela no fim
     except rospy.ROSInterruptException:
         pass
